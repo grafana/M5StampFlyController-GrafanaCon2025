@@ -32,6 +32,8 @@
 #include <SPIFFS.h>
 #include "lvgl_porting.h"
 
+#include "config.h"
+
 #include "./images/pair_confirm.h"
 #include "./images/press_fly.h"
 #include "./images/pair_success.h"
@@ -106,11 +108,6 @@ volatile uint8_t Channel                   = CHANNEL;
 volatile uint8_t is_fly_flag               = 0;
 volatile unsigned long is_fly_flag_counter = 0;
 
-uint8_t global_channel = 8;
-
-// Wi-Fi credentials
-const char* ssid = ""; // Use a 2.4Ghz Wi-Fi hotspot
-const char* password = "";
 TaskHandle_t WiFiTaskHandle = NULL;
 QueueHandle_t WiFiQueue;
 
@@ -140,11 +137,7 @@ void sendHttpPost(void *parameter) {
         if (xQueueReceive(WiFiQueue, &message, portMAX_DELAY)) {
             if (WiFi.status() == WL_CONNECTED) {
                 HTTPClient http;
-
-                String grafana_username = "";
-                String grafana_password = "";
-                String grafana_url = ""; 
-                
+               
                 http.begin("https://" + grafana_username + ":" + grafana_password + "@" + grafana_url + "/api/v1/push/influx/write");  // Specify the URL
                 http.addHeader("Content-Type", "application/json");  // Set content type
 
@@ -246,19 +239,21 @@ void save_data(void) {
 
 // EEPROMからデータを読み出す
 void load_data(void) {
+    uint8_t temp_global_channel;
+
     SPIFFS.begin(true);
     File fp = SPIFFS.open("/peer_info.txt", FILE_READ);
     char buf[BUF_SIZE + 1];
     while (fp.read((uint8_t *)buf, BUF_SIZE) == BUF_SIZE) {
         // USBSerial.print(buf);
-        sscanf(buf, "%hhd,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX", &global_channel, &Addr2[0], &Addr2[1], &Addr2[2], &Addr2[3],
+        sscanf(buf, "%hhd,%hhX,%hhX,%hhX,%hhX,%hhX,%hhX", &temp_global_channel, &Addr2[0], &Addr2[1], &Addr2[2], &Addr2[3],
                &Addr2[4], &Addr2[5]);
-        USBSerial.printf("%d,%02X,%02X,%02X,%02X,%02X,%02X\n\r", global_channel, Addr2[0], Addr2[1], Addr2[2], Addr2[3],
+        USBSerial.printf("%d,%02X,%02X,%02X,%02X,%02X,%02X\n\r", temp_global_channel, Addr2[0], Addr2[1], Addr2[2], Addr2[3],
                          Addr2[4], Addr2[5]);
     }
     fp.close();
     SPIFFS.end();
-    global_channel = 8;
+    //global_channel = 9;
 }
 
 void rc_init(uint8_t ch, uint8_t *addr) {
