@@ -131,17 +131,17 @@ void task_tone(void *pvParameters);
 
 //void sendHttpPost(float roll, float pitch, float yaw, float voltage, int alt_flag, int fly_mode, int tof_front) {
 void sendHttpPost(void *parameter) {
+    HTTPClient http;
+    String postData = "";
+    
+    http.begin("https://" + grafana_username + ":" + grafana_password + "@" + grafana_url + "/api/v1/push/influx/write");  // Specify the URL
+    http.addHeader("Content-Type", "application/json");  // Set content type
+
     data_to_send message;
     while (true) {
         // Wait for data from the queue (Blocks until data arrives)
         if (xQueueReceive(WiFiQueue, &message, portMAX_DELAY)) {
             if (WiFi.status() == WL_CONNECTED) {
-                HTTPClient http;
-               
-                http.begin("https://" + grafana_username + ":" + grafana_password + "@" + grafana_url + "/api/v1/push/influx/write");  // Specify the URL
-                http.addHeader("Content-Type", "application/json");  // Set content type
-
-                String postData = "";
                 USBSerial.printf("Reveived in thread buffer: %f,%f,%f,%f,%d,%d,%d\n\r", message.roll, message.pitch, message.yaw, message.voltage, message.alt_flag, message.fly_mode, message.tof_front);
                 postData = "m5stampFly,location=home roll=" + String(message.roll)
                           + ",pitch=" + String(message.pitch)
@@ -153,11 +153,11 @@ void sendHttpPost(void *parameter) {
 
                 int httpResponseCode = http.POST(postData);
 
-                http.end();
+
             }
         }
     }
-
+    http.end();
 }
 
 // 受信コールバック
@@ -259,7 +259,7 @@ void load_data(void) {
 void rc_init(uint8_t ch, uint8_t *addr) {
 
     data_to_send d = {0, 0, 0, 0, 0, 0, 0};
-    WiFiQueue = xQueueCreate(5, sizeof(d));
+    WiFiQueue = xQueueCreate(60, sizeof(d));
     if (WiFiQueue == NULL) {
         Serial.println("Error creating queue!");
         return;
