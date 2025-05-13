@@ -113,7 +113,7 @@ In your Grafana Cloud Portal, open up the details of your Grafana Instance
 1. Edit `src/config.h` (only if changing Wi-Fi channel):
 
     ```
-    uint8_t global_channel = 8;
+    u_int8_t global_channel = 9;
     ```
 1. Connect via USB and upload
     > ⚠️ Both devices must use 2.4GHz Wi-Fi and be on the same channel. You might need to enable Client-to-Client (P2P) on your router.
