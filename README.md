@@ -1,6 +1,6 @@
-# M5Atom Controller
+# Monitor drone telemetry with Grafana 
 
-## Monitor drone telemetry with Grafana
+## M5Atom Controller
 
 <img width="466" alt="Screenshot 2025-05-01 103108" src="https://github.com/user-attachments/assets/9e6933d5-cf18-494a-8337-e621b93b684a" />
 
