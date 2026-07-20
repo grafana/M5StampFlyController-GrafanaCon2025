@@ -9,7 +9,7 @@ jobs:
     name: Lint Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
+      - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2
       - uses: arduino/arduino-lint-action@67a260f6a5747d75bd6871a63fd3ce436befd866 # v1.0.2
         with:
           library-manager: update
