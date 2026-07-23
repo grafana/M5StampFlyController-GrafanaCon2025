@@ -14,7 +14,7 @@ jobs:
           # - check: 'examples'
           #   exclude: ''
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Run clang-format style check for C/C++/Protobuf programs.
         uses: jidicula/clang-format-action@4bb67b12614177e8c869e0e66b47aaa79b3b253b # v4.9.0
         with:
